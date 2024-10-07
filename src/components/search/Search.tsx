@@ -4,11 +4,17 @@ import bag from "../../assets/icons/bag.svg";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store"; 
+import Language from "../../store/language";
 
 const Search: React.FC = () => {
     const navigate = useNavigate();
+    const {changePriceName}:any = Language()
     const cartItems = useSelector((state: RootState) => state.cart.items);
     const likedProductsCount = JSON.parse(localStorage.getItem("likedProducts") || "[]").length; 
+
+    function handleSelect(e:any) {
+        changePriceName(e.target.value);
+    }
 
     const handleLikeClick = () => {
         navigate("/like");
@@ -32,10 +38,10 @@ const Search: React.FC = () => {
                     />
                 </div>
                 <div className="flex items-center space-x-6">
-                    <select className="w-[110px] h-[40px] border border-gray-300 p-2 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 ease-in-out hover:border-blue-400">
-                        <option defaultChecked value="1">🇬🇧 English</option>
-                        <option value="2">🇷🇺 Russian</option>
-                        <option value="3">🇺🇿 Uzbek</option>
+                    <select onChange={(e) => handleSelect(e)} className="w-[110px] h-[40px] border border-gray-300 p-2 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 ease-in-out hover:border-blue-400">
+                        <option defaultChecked value="eng">🇬🇧 English</option>
+                        <option value="ru">🇷🇺 Russian</option>
+                        <option value="uz">🇺🇿 Uzbek</option>
                     </select>
                     <ul className="flex items-center space-x-4 text-sm font-medium text-gray-800">
                         <li className="cursor-pointer hover:text-gray-500 transition duration-150">MAYBELLINE</li>

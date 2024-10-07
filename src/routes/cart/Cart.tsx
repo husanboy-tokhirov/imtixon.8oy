@@ -3,8 +3,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../store/store"; 
 import { fetchCartItems, removeFromCart } from "../../redux/cardSlice"; 
 import { useNavigate } from "react-router-dom"; 
+import Language from "../../store/language";
 
 const Cart: React.FC = () => {
+    const {price_name}:any = Language()
     const dispatch = useDispatch<AppDispatch>(); 
     const navigate = useNavigate(); 
     const { items: cartItems, loading, error } = useSelector((state: RootState) => state.cart);
@@ -81,7 +83,6 @@ const Cart: React.FC = () => {
                             <div className="text-right">
                                 <p>Quantity: {product.quantity}</p>
                                 <p>Price: ${product.price.toFixed(2)}</p>
-                                <p>Total: ${(product.price * product.quantity).toFixed(2)}</p>
                                 <button
                                     className="mt-2 bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 transition duration-300"
                                     onClick={() => handleDelete(product.id)} 

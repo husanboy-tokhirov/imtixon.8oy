@@ -80,23 +80,23 @@ const cartSlice = createSlice({
       state.items = [];
       localStorage.removeItem('cartItems');
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchCartItems.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchCartItems.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
-        state.items = action.payload;
-        state.loading = false;
-        localStorage.setItem('cartItems', JSON.stringify(state.items));
-      })
-      .addCase(fetchCartItems.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      });
-  },
+    },
+    extraReducers: (builder) => {
+      builder
+        .addCase(fetchCartItems.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        .addCase(fetchCartItems.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
+          state.items = action.payload;
+          state.loading = false;
+          localStorage.setItem('cartItems', JSON.stringify(state.items));
+        })
+        .addCase(fetchCartItems.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload as string;
+        });
+    },
 });
 
 export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;

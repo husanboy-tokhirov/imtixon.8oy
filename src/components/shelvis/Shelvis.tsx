@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useGetProductsQuery } from "../../services/Api";
 import like from "../../assets/icons/like.svg";
 import basket from "../../assets/icons/basket.svg";
+import Language from "../../store/language";
 
 const Shelvis: React.FC = () => {
+    const {price_name}:any = Language()
     const { data, error, isLoading } = useGetProductsQuery();
     const [currentIndex, setCurrentIndex] = useState(0);
     const productsPerPage = 3;
@@ -93,7 +95,8 @@ const Shelvis: React.FC = () => {
                             <div className="flex gap-2 items-center w-full p-2">
                                 <div className="flex gap-2 items-center w-full">
                                     <p className="text-gray-700 text-[20px]">{product.price_sign || 'No price sign'}</p>
-                                    <span className="text-red-500 text-[20px]">{product.price || 'No price'}</span>
+                                    <p>Price: {price_name == 'eng' ? `${product.price}$` : price_name == 'ru' ? `${product.price * 95}p` : `${product.price * 12500}som`}</p>
+                                    <p>Total: ${(product.price * product.quantity).toFixed(2)}</p>
                                 </div>
                                 <div className="flex gap-2 items-center">
                                     <img
