@@ -17,14 +17,12 @@ interface CartState {
   error: string | null;
 }
 
-// Initial state
 const initialState: CartState = {
-  items: [],
+  items: JSON.parse(localStorage.getItem('cartItems') || '[]'), 
   loading: false,
   error: null,
 };
 
-// Simulate an API call to fetch cart items using a timeout
 const mockFetchCartItems = (): Promise<CartItem[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -50,17 +48,16 @@ const mockFetchCartItems = (): Promise<CartItem[]> => {
           price: 22.49,
         },
       ]);
-    }, 1000); // Simulating network delay of 1 second
+    }, 1000);
   });
 };
 
-// Thunk action to fetch cart items without Axios
 export const fetchCartItems = createAsyncThunk(
   'cart/fetchCartItems',
   async (_, { rejectWithValue }) => {
     try {
-      const data = await mockFetchCartItems(); // Call the mock API
-      return data; // Return the mocked data
+      const data = await mockFetchCartItems();
+      return data;
     } catch (error: any) {
       return rejectWithValue('Failed to fetch cart items');
     }
@@ -73,12 +70,15 @@ const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action: PayloadAction<CartItem>) => {
       state.items.push(action.payload);
+      localStorage.setItem('cartItems', JSON.stringify(state.items));
     },
     removeFromCart: (state, action: PayloadAction<number>) => {
       state.items = state.items.filter((item) => item.id !== action.payload);
+      localStorage.setItem('cartItems', JSON.stringify(state.items));
     },
     clearCart: (state) => {
       state.items = [];
+      localStorage.removeItem('cartItems');
     },
   },
   extraReducers: (builder) => {
@@ -90,6 +90,7 @@ const cartSlice = createSlice({
       .addCase(fetchCartItems.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
         state.items = action.payload;
         state.loading = false;
+        localStorage.setItem('cartItems', JSON.stringify(state.items));
       })
       .addCase(fetchCartItems.rejected, (state, action) => {
         state.loading = false;
@@ -98,8 +99,5 @@ const cartSlice = createSlice({
   },
 });
 
-// Export the cart actions
 export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;
-
-// Export the cart reducer to use it in the store
 export default cartSlice.reducer;

@@ -1,4 +1,3 @@
-import React from "react";
 import beauty from "../../assets/icons/beautybaylogo.svg";
 import like from "../../assets/icons/like.svg";
 import bag from "../../assets/icons/bag.svg";
@@ -9,7 +8,7 @@ import { RootState } from "../../store/store";
 const Search: React.FC = () => {
     const navigate = useNavigate();
     const cartItems = useSelector((state: RootState) => state.cart.items);
-    const likedProductsCount = JSON.parse(localStorage.getItem("likedProducts") || "[]").length; // Get liked products count
+    const likedProductsCount = JSON.parse(localStorage.getItem("likedProducts") || "[]").length; 
 
     const handleLikeClick = () => {
         navigate("/like");
@@ -51,7 +50,7 @@ const Search: React.FC = () => {
                                 onClick={handleLikeClick} 
                             />
                             <div className="absolute top-[-10px] right-[-10px] bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                                {likedProductsCount} {/* Show the liked products count */}
+                                {likedProductsCount}
                             </div>
                         </div>
                         <div className="relative">

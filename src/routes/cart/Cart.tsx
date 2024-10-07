@@ -17,11 +17,18 @@ const Cart: React.FC = () => {
         }
         dispatch(fetchCartItems());
     }, [dispatch]);
+    useEffect(() => {
+        if (cartItems.length === 0) {
+            localStorage.removeItem('cartItems');
+        } else {
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        }
+    }, [cartItems]);
 
     const handleDelete = (productId: number) => {
         dispatch(removeFromCart(productId)); 
         const updatedCartItems = cartItems.filter(item => item.id !== productId);
-        localStorage.setItem("cartItems", JSON.stringify(updatedCartItems)); 
+        localStorage.setItem("cartItems", JSON.stringify(updatedCartItems));
     };
 
     const handleGoHome = () => {
