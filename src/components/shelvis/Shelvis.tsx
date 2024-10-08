@@ -5,7 +5,7 @@ import basket from "../../assets/icons/basket.svg";
 import Language from "../../store/language";
 
 const Shelvis: React.FC = () => {
-    const {price_name}:any = Language()
+    const { price_name }: any = Language();
     const { data, error, isLoading } = useGetProductsQuery();
     const [currentIndex, setCurrentIndex] = useState(0);
     const productsPerPage = 3;
@@ -61,6 +61,13 @@ const Shelvis: React.FC = () => {
         setLikedProducts(newLikedProducts);
         localStorage.setItem("likedProducts", JSON.stringify(newLikedProducts));
     };
+    const handleAddToCart = (product: any) => {
+        const confirmAdd = window.confirm(`Do you want to add ${product.name} to the cart?`);
+        
+        if (confirmAdd) {
+            alert(`${product.name} has been added to your cart.`);
+        }
+    };
 
     if (isLoading) return <div className="text-center mt-10">Loading...</div>;
 
@@ -94,9 +101,7 @@ const Shelvis: React.FC = () => {
 
                             <div className="flex gap-2 items-center w-full p-2">
                                 <div className="flex gap-2 items-center w-full">
-                                    <p className="text-gray-700 text-[20px]">{product.price_sign || 'No price sign'}</p>
-                                    <p>Price: {price_name == 'eng' ? `${product.price}$` : price_name == 'ru' ? `${product.price * 95}p` : `${product.price * 12500}som`}</p>
-                                    <p>Total: ${(product.price * product.quantity).toFixed(2)}</p>
+                                    <p>Price: {price_name === 'eng' ? `${product.price}$` : price_name === 'ru' ? `${product.price * 95}p` : `${product.price * 12500}so'm`}</p>
                                 </div>
                                 <div className="flex gap-2 items-center">
                                     <img
@@ -106,7 +111,10 @@ const Shelvis: React.FC = () => {
                                         onClick={() => toggleLike(product)} 
                                         style={{ filter: likedProducts.some(item => item.id === product.id) ? 'grayscale(0%)' : 'grayscale(100%)', transition: 'filter 0.3s' }} 
                                     />
-                                    <div className="w-[55px] flex items-center justify-center h-[40px] bg-black rounded-full">
+                                    <div 
+                                        className="w-[55px] flex items-center justify-center h-[40px] bg-black rounded-full cursor-pointer"
+                                        onClick={() => handleAddToCart(product)} 
+                                    >
                                         <img src={basket} alt="basket" />
                                     </div>
                                 </div>

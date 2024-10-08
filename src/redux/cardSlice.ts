@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, isAnyOf } from '@reduxjs/toolkit';
+import { api } from '../services/Api';
 
 interface CartItem {
   id: number;
@@ -9,6 +10,7 @@ interface CartItem {
   category?: string;
   quantity: number;
   price: number;
+  imageLink: string;
 }
 
 interface CartState {
@@ -18,85 +20,54 @@ interface CartState {
 }
 
 const initialState: CartState = {
-  items: JSON.parse(localStorage.getItem('cartItems') || '[]'), 
+  items: JSON.parse(localStorage.getItem('cartItems') || '[]'),
   loading: false,
   error: null,
 };
-
-const mockFetchCartItems = (): Promise<CartItem[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([
-        {
-          id: 1,
-          name: 'Lipstick',
-          selectedColor: '#FF5733',
-          size: 'Medium',
-          brand: 'Maybelline',
-          category: 'Makeup',
-          quantity: 2,
-          price: 15.99,
-        },
-        {
-          id: 2,
-          name: 'Foundation',
-          selectedColor: '#D4A5A5',
-          size: 'Small',
-          brand: 'Loreal',
-          category: 'Makeup',
-          quantity: 1,
-          price: 22.49,
-        },
-      ]);
-    }, 1000);
-  });
-};
-
-export const fetchCartItems = createAsyncThunk(
-  'cart/fetchCartItems',
-  async (_, { rejectWithValue }) => {
-    try {
-      const data = await mockFetchCartItems();
-      return data;
-    } catch (error: any) {
-      return rejectWithValue('Failed to fetch cart items');
-    }
-  }
-);
 
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
     addToCart: (state, action: PayloadAction<CartItem>) => {
-      state.items.push(action.payload);
+      const itemExists = state.items.find(item => item.id === action.payload.id);
+      if (itemExists) {
+        itemExists.quantity += action.payload.quantity; 
+      } else {
+        state.items.push(action.payload); 
+      }
       localStorage.setItem('cartItems', JSON.stringify(state.items));
     },
     removeFromCart: (state, action: PayloadAction<number>) => {
-      state.items = state.items.filter((item) => item.id !== action.payload);
+      state.items = state.items.filter(item => item.id !== action.payload);
       localStorage.setItem('cartItems', JSON.stringify(state.items));
     },
     clearCart: (state) => {
       state.items = [];
       localStorage.removeItem('cartItems');
     },
-    },
-    extraReducers: (builder) => {
-      builder
-        .addCase(fetchCartItems.pending, (state) => {
-          state.loading = true;
-          state.error = null;
-        })
-        .addCase(fetchCartItems.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
-          state.items = action.payload;
-          state.loading = false;
-          localStorage.setItem('cartItems', JSON.stringify(state.items));
-        })
-        .addCase(fetchCartItems.rejected, (state, action) => {
-          state.loading = false;
-          state.error = action.payload as string;
-        });
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addMatcher(
+        isAnyOf(
+          api.endpoints.getProducts.matchPending,
+          api.endpoints.getProducts.matchFulfilled,
+          api.endpoints.getProducts.matchRejected
+        ),
+        (state, action) => {
+          if (api.endpoints.getProducts.matchPending(action)) {
+            state.loading = true;
+            state.error = null;
+          } else if (api.endpoints.getProducts.matchFulfilled(action)) {
+            state.loading = false;
+          } else if (api.endpoints.getProducts.matchRejected(action)) {
+            state.loading = false;
+            state.error = action.error.message || 'Failed to fetch products';
+          }
+        }
+      );
+  },
 });
 
 export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;

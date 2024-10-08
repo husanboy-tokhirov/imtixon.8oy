@@ -8,11 +8,11 @@ import Language from "../../store/language";
 
 const Search: React.FC = () => {
     const navigate = useNavigate();
-    const {changePriceName}:any = Language()
-    const cartItems = useSelector((state: RootState) => state.cart.items);
+    const { changePriceName }: any = Language();
+    const cartItems = useSelector((state: RootState) => state.cart.items); 
     const likedProductsCount = JSON.parse(localStorage.getItem("likedProducts") || "[]").length; 
 
-    function handleSelect(e:any) {
+    function handleSelect(e: any) {
         changePriceName(e.target.value);
     }
 
@@ -67,7 +67,7 @@ const Search: React.FC = () => {
                                 onClick={handleCartClick} 
                             />
                             <div className="absolute top-[-10px] right-[-10px] bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                                {cartItems.length}
+                                {cartItems.length} 
                             </div>
                         </div>
                     </div>
