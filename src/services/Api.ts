@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://makeup-api.herokuapp.com/api/v1", 
+  baseUrl: import.meta.env.VITE_BASE_URL,
   prepareHeaders: (headers) => {
     const token = localStorage.getItem("token");
     if (token) {
